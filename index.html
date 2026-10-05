@@ -1,28 +1,351 @@
 <!DOCTYPE html>
 <html lang="id">
   <head>
+    <base target="_top">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Validasi Final Pengajuan Beasiswa PTK SD IA</title>
     <style>
-      html, body {
+      * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background-color: #eef4f8;
+        -webkit-tap-highlight-color: transparent;
       }
-      iframe {
+
+      html, body {
         width: 100%;
-        height: 100%;
-        border: none;
-        display: block;
+        min-height: 100%;
+        background: #eef4f8;
+        background: linear-gradient(180deg, #eef4f8 0%, #dbe8f4 100%);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      .app-wrapper {
+        width: 100%;
+        max-width: 440px;
+        margin: 0 auto;
+        padding: 16px 12px 100px 12px;
+      }
+
+      .header-card {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-radius: 28px;
+        padding: 20px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 
+          0 10px 25px rgba(0, 0, 0, 0.04),
+          inset 0 1px 2px rgba(255, 255, 255, 0.9);
+        text-align: center;
+        margin-bottom: 16px;
+      }
+
+      .title {
+        font-size: 21px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.5px;
+        margin-bottom: 4px;
+        line-height: 1.3;
+      }
+
+      .subtitle {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #2563eb;
+        text-decoration: none;
+        margin-bottom: 12px;
+        display: inline-block;
+      }
+
+      .badge-wrapper {
+        display: flex;
+        justify-content: center;
+      }
+
+      .update-badge {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #334155;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        display: inline-block;
+      }
+
+      .card-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .card-item {
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.95);
+        box-shadow: 
+          0 6px 16px rgba(0, 0, 0, 0.03),
+          inset 0 1px 1px rgba(255, 255, 255, 1);
+        overflow: hidden;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #1e293b;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(241, 245, 249, 0.6) 100%);
+      }
+
+      .card-body {
+        padding: 12px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        font-size: 13.5px;
+      }
+
+      .info-label {
+        color: #64748b;
+        font-weight: 500;
+        flex: 1;
+      }
+
+      .info-value {
+        color: #0f172a;
+        font-weight: 700;
+        text-align: right;
+        flex: 1.5;
+        word-break: break-word;
+      }
+
+      .loading {
+        background: rgba(255, 255, 255, 0.75);
+        border-radius: 20px;
+        text-align: center;
+        padding: 30px;
+        color: #64748b;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+      }
+
+      .spinner {
+        width: 28px;
+        height: 28px;
+        border: 3px solid rgba(203, 213, 225, 0.6);
+        border-top-color: #2563eb;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 10px;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
       }
     </style>
   </head>
   <body>
-    <!-- https://script.google.com/macros/s/AKfycbzVhT5tIFjIuSHn2MTZLeU0mI9_GUgDU5I84gs_U-IokxLS-_K3wxtXP0MKlde3gY9hvg/exec -->
-    <iframe src="https://script.google.com/macros/s/AKfycbzVhT5tIFjIuSHn2MTZLeU0mI9_GUgDU5I84gs_U-IokxLS-_K3wxtXP0MKlde3gY9hvg/exec" allow="fullscreen"></iframe>
+
+    <div class="app-wrapper">
+      <div class="header-card">
+        <h1 class="title">Validasi Final Pengajuan Beasiswa PTK SD IA</h1>
+        <a href="#" class="subtitle">© Zukhruf Farizi</a>
+        <div class="badge-wrapper">
+          <div class="update-badge" id="updateBadge">Update: --:-- -- --/--/----</div>
+        </div>
+      </div>
+
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div id="loadingText">Memuat data...</div>
+      </div>
+
+      <div class="card-list" id="cardList" style="display: none;"></div>
+    </div>
+
+    <script>
+      // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI (BERAKHIRAN /exec)
+      const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzreCPwsfee-WkIEox1HsYiXecoFGUz-sxln-Runqq3PyJL1_dujAKjUdALjm8M6S949g/exec";
+
+      function getFormattedTime() {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'p.m' : 'a.m';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const timeStr = String(hours).padStart(2, '0') + ':' + minutes + ' ' + ampm;
+        const dateStr = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
+        return timeStr + ' ' + dateStr;
+      }
+
+      window.onload = function() {
+        document.getElementById('updateBadge').innerText = 'Update: ' + getFormattedTime();
+
+        fetch(WEB_APP_URL)
+          .then(res => res.json())
+          .then(data => handleSuccess(data))
+          .catch(err => handleError(err));
+      };
+
+      function handleError(err) {
+        document.getElementById('loading').innerHTML = `
+          <div style="color: #ef4444; font-weight: 600; padding: 10px; font-size: 14px;">
+            Gagal mengambil data:<br>${err.message || err}
+          </div>
+        `;
+      }
+
+      function handleSuccess(response) {
+        if (!response || !response.success) {
+          handleError({ message: response ? response.error : 'Respon data tidak valid' });
+          return;
+        }
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('cardList').style.display = 'flex';
+
+        if (response.updateTime) {
+          document.getElementById('updateBadge').innerText = 'Update: ' + response.updateTime;
+        }
+
+        const rows = response.rows;
+        if (!rows || rows.length === 0) {
+          document.getElementById('cardList').innerHTML = '<div style="text-align:center; padding:20px;">Tidak ada data.</div>';
+          return;
+        }
+
+        let headerRowIndex = -1;
+        let colNo = -1, colPtk = -1, colMurid = -1, colTglLahir = -1, colKelas = -1, colLembaga = -1;
+
+        for (let i = 0; i < rows.length; i++) {
+          const rowStr = rows[i].map(c => String(c).toLowerCase()).join(' ');
+          if (rowStr.includes('nama ptk') || rowStr.includes('nama murid') || rowStr.includes('nama santri')) {
+            headerRowIndex = i;
+            for (let j = 0; j < rows[i].length; j++) {
+              const val = String(rows[i][j]).trim().toLowerCase();
+              if (val === 'no' || val === 'no.') colNo = j;
+              else if (val.includes('nama ptk')) colPtk = j;
+              else if (val.includes('nama murid') || val.includes('nama santri')) colMurid = j;
+              else if (val.includes('tanggal lahir') || val.includes('tgl lahir')) colTglLahir = j;
+              else if (val.includes('kelas')) colKelas = j;
+              else if (val.includes('lembaga')) colLembaga = j;
+            }
+            break;
+          }
+        }
+
+        if (colNo === -1) colNo = 0;
+        if (colPtk === -1) colPtk = 1;
+        if (colMurid === -1) colMurid = 2;
+        if (colTglLahir === -1) colTglLahir = 3;
+        if (colKelas === -1) colKelas = 4;
+        if (colLembaga === -1) colLembaga = 5;
+
+        const dataRows = headerRowIndex !== -1 ? rows.slice(headerRowIndex + 1) : rows.slice(1);
+
+        const ptkCounts = {};
+        dataRows.forEach(r => {
+          const ptkName = (r[colPtk] || '').toString().trim().toUpperCase();
+          if (ptkName) {
+            ptkCounts[ptkName] = (ptkCounts[ptkName] || 0) + 1;
+          }
+        });
+
+        const colorPalette = [
+          { bg: '#fef08a', text: '#854d0e' },
+          { bg: '#bbf7d0', text: '#166534' },
+          { bg: '#fed7aa', text: '#9a3412' },
+          { bg: '#fecdd3', text: '#9f1239' },
+          { bg: '#a7f3d0', text: '#065f46' },
+          { bg: '#d9f99d', text: '#3f6212' },
+          { bg: '#fde68a', text: '#92400e' },
+          { bg: '#ffedd5', text: '#c2410c' },
+          { bg: '#dcfce7', text: '#15803d' },
+          { bg: '#fef3c7', text: '#78350f' }
+        ];
+
+        const ptkColorMap = {};
+        let paletteIndex = 0;
+
+        Object.keys(ptkCounts).forEach(ptkName => {
+          if (ptkCounts[ptkName] > 1) {
+            ptkColorMap[ptkName] = colorPalette[paletteIndex % colorPalette.length];
+            paletteIndex++;
+          }
+        });
+
+        const container = document.getElementById('cardList');
+        let html = '';
+        let itemNum = 1;
+
+        dataRows.forEach(r => {
+          if (!r.some(cell => String(cell).trim() !== '')) return;
+
+          const no = r[colNo] || itemNum;
+          const namaPtk = r[colPtk] || '-';
+          const namaSantri = r[colMurid] || '-';
+          const tglLahir = r[colTglLahir] || '-';
+          const kelas = r[colKelas] || '-';
+          const lembaga = r[colLembaga] || '-';
+
+          const ptkKey = namaPtk.toString().trim().toUpperCase();
+          let customHeaderStyle = '';
+
+          if (ptkColorMap[ptkKey]) {
+            const colorObj = ptkColorMap[ptkKey];
+            customHeaderStyle = `style="background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.03) 100%), ${colorObj.bg} !important; color: ${colorObj.text} !important;"`;
+          }
+
+          html += `
+            <div class="card-item">
+              <div class="card-header" ${customHeaderStyle}>
+                <span>No. ${no}</span>
+                <span>${namaPtk}</span>
+              </div>
+              <div class="card-body">
+                <div class="info-row">
+                  <span class="info-label">Nama Santri</span>
+                  <span class="info-value">${namaSantri}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Tanggal Lahir</span>
+                  <span class="info-value">${tglLahir}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Kelas</span>
+                  <span class="info-value">${kelas}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Lembaga</span>
+                  <span class="info-value">${lembaga}</span>
+                </div>
+              </div>
+            </div>
+          `;
+          itemNum++;
+        });
+
+        container.innerHTML = html || '<div style="text-align:center;">Tidak ada data untuk ditampilkan.</div>';
+      }
+    </script>
   </body>
 </html>
