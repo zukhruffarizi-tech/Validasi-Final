@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
   <head>
-    <base target="_top">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Validasi Final Pengajuan Beasiswa PTK SD IA</title>
@@ -182,8 +181,9 @@
     </div>
 
     <script>
-      // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI (BERAKHIRAN /exec)
-      const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzreCPwsfee-WkIEox1HsYiXecoFGUz-sxln-Runqq3PyJL1_dujAKjUdALjm8M6S949g/exec";
+      // Endpoint CSV langsung dari Spreadsheet Anda
+      const CSV_URL_PRIMARY = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQI23K8kzpwixRWek_y8W-IZmxlckyTKmHXGroVEpO0gvnaLBzeIZ6rj7COiaPTJNYb6uLml1QGuR2X/pub?output=csv";
+      const CSV_URL_SECONDARY = "https://docs.google.com/spreadsheets/d/11udczKSWrmq6w_MsJcYvRjoraq2-r0-APtOvlvfIyzo/gviz/tq?tqx=out:csv";
 
       function getFormattedTime() {
         const now = new Date();
@@ -199,39 +199,79 @@
 
       window.onload = function() {
         document.getElementById('updateBadge').innerText = 'Update: ' + getFormattedTime();
-
-        fetch(WEB_APP_URL)
-          .then(res => res.json())
-          .then(data => handleSuccess(data))
-          .catch(err => handleError(err));
+        loadData();
       };
+
+      function loadData() {
+        fetch(CSV_URL_PRIMARY)
+          .then(res => {
+            if (!res.ok) throw new Error("Gagal membaca tautan publik");
+            return res.text();
+          })
+          .then(csvText => parseAndRender(csvText))
+          .catch(() => {
+            fetch(CSV_URL_SECONDARY)
+              .then(res => res.text())
+              .then(csvText => parseAndRender(csvText))
+              .catch(err => handleError(err));
+          });
+      }
+
+      function parseCSV(text) {
+        let lines = [];
+        let row = [];
+        let inQuotes = false;
+        let currentVal = '';
+
+        for (let i = 0; i < text.length; i++) {
+          let char = text[i];
+          let nextChar = text[i + 1];
+
+          if (char === '"') {
+            if (inQuotes && nextChar === '"') {
+              currentVal += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (char === ',' && !inQuotes) {
+            row.push(currentVal.trim());
+            currentVal = '';
+          } else if ((char === '\r' || char === '\n') && !inQuotes) {
+            if (char === '\r' && nextChar === '\n') i++;
+            row.push(currentVal.trim());
+            if (row.some(c => c !== '')) lines.push(row);
+            row = [];
+            currentVal = '';
+          } else {
+            currentVal += char;
+          }
+        }
+        if (currentVal || row.length > 0) {
+          row.push(currentVal.trim());
+          if (row.some(c => c !== '')) lines.push(row);
+        }
+        return lines;
+      }
 
       function handleError(err) {
         document.getElementById('loading').innerHTML = `
           <div style="color: #ef4444; font-weight: 600; padding: 10px; font-size: 14px;">
-            Gagal mengambil data:<br>${err.message || err}
+            Gagal mengambil data:<br>${err.message || err}<br><br>
+            <small style="color:#64748b;">Pastikan Spreadsheet sudah di-Publikasikan ke Web.</small>
           </div>
         `;
       }
 
-      function handleSuccess(response) {
-        if (!response || !response.success) {
-          handleError({ message: response ? response.error : 'Respon data tidak valid' });
+      function parseAndRender(csvText) {
+        const rows = parseCSV(csvText);
+        if (!rows || rows.length === 0) {
+          handleError({ message: "Data spreadsheet kosong" });
           return;
         }
 
         document.getElementById('loading').style.display = 'none';
         document.getElementById('cardList').style.display = 'flex';
-
-        if (response.updateTime) {
-          document.getElementById('updateBadge').innerText = 'Update: ' + response.updateTime;
-        }
-
-        const rows = response.rows;
-        if (!rows || rows.length === 0) {
-          document.getElementById('cardList').innerHTML = '<div style="text-align:center; padding:20px;">Tidak ada data.</div>';
-          return;
-        }
 
         let headerRowIndex = -1;
         let colNo = -1, colPtk = -1, colMurid = -1, colTglLahir = -1, colKelas = -1, colLembaga = -1;
